@@ -1,10 +1,8 @@
 CC = gcc
 DEBUG=yes
-#X11 or EFL
-GUI=EFL
 
 ifeq ($(DEBUG),yes)
-    CFLAGS = -DDEBUG -g -ggdb -Wall -Wextra -pg
+    CFLAGS = -g -ggdb -Wall -Wextra
 else
     CFLAGS = -Wall -Wextra -O2
 endif
