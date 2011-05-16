@@ -19,10 +19,13 @@ main(void)
     if (!ecore_evas_init())
         return -1;
 
+    w = 500;
+    h = 300;
+
     ee = ecore_evas_software_x11_new(
             NULL, /* const char * disp_name */
             0,    /*  Ecore_X_Window parent */
-            0, 0, 500, 300);
+            0, 0, w, h);
 
     ecore_evas_title_set(ee, "EEnavders.fractal");
     ecore_evas_borderless_set(ee, 0);
