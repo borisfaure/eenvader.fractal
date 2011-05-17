@@ -19,7 +19,6 @@ static struct {
 int
 main(void)
 {
-    Evas_Object *o_bg;
     long int seedval;
     int fd;
 
@@ -52,18 +51,6 @@ main(void)
     ecore_evas_borderless_set(_G.ee, 0);
     ecore_evas_show(_G.ee);
     _G.evas = ecore_evas_get(_G.ee);
-
-    o_bg = evas_object_image_add(_G.evas);
-
-    evas_object_resize(o_bg, _G.w, _G.h);
-    evas_object_layer_set(o_bg, -999);
-    evas_object_image_file_set(
-            o_bg,
-            "data/bg.png",
-            NULL);
-    evas_object_image_fill_set(o_bg, 0, 0, 128, 128);
-    /*evas_object_pass_events_set(o_bg, 1);*/
-    evas_object_show(o_bg);
 
 
     ecore_main_loop_begin();
