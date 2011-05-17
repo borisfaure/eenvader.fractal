@@ -2,9 +2,9 @@ CC = gcc
 DEBUG=yes
 
 ifeq ($(DEBUG),yes)
-    CFLAGS = -g -ggdb -Wall -Wextra
+    CFLAGS = -g -ggdb -Wall -Wextra -std=gnu99
 else
-    CFLAGS = -Wall -Wextra -O2
+    CFLAGS = -Wall -Wextra -O2 -std=gnu99
 endif
 LDFLAGS = -lm -pg `pkg-config --libs --cflags ecore-evas`
 IFLAGS  = `pkg-config --cflags ecore-evas`
