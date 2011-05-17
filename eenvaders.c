@@ -1,11 +1,12 @@
 #include    <stdlib.h>
-#include    <stdio.h>
-#include    <string.h>
+#include    <sys/types.h>
+#include    <sys/stat.h>
+#include    <unistd.h>
+#include    <fcntl.h>
 #include    <Evas.h>
 #include    <Ecore.h>
 #include    <Ecore_Evas.h>
 #include    <math.h>
-
 static struct {
     Ecore_Evas  *ee;
     Evas        *evas;
@@ -19,12 +20,28 @@ int
 main(void)
 {
     Evas_Object *o_bg;
+    long int seedval;
+    int fd;
 
     if (!ecore_evas_init())
         return -1;
 
     _G.w = 500;
     _G.h = 300;
+
+
+    /*open file */
+    if ((fd = open("/dev/urandom", O_RDONLY)) < 0) {
+       perror(NULL);
+       exit(1);
+    }
+    if (read(fd, &seedval, sizeof(seedval)) != sizeof(seedval)) {
+       perror(NULL);
+       close(fd);
+       exit(1);
+    }
+    close(fd);
+    srand48(seedval);
 
     _G.ee = ecore_evas_software_x11_new(
             NULL, /* const char * disp_name */
