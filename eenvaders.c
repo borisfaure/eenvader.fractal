@@ -6,35 +6,39 @@
 #include    <Ecore_Evas.h>
 #include    <math.h>
 
-Ecore_Evas  * ee;
-Evas        * evas;
-Evas_Object * o_bg;
-Evas_Coord    x, y, w, h;
+static struct {
+    Ecore_Evas  *ee;
+    Evas        *evas;
+    Evas_Coord   x, y, w, h;
+} eenvaders_g;
+#define _G eenvaders_g
+
+
 
 int
 main(void)
 {
-    Evas_Object * o;
+    Evas_Object *o_bg;
 
     if (!ecore_evas_init())
         return -1;
 
-    w = 500;
-    h = 300;
+    _G.w = 500;
+    _G.h = 300;
 
-    ee = ecore_evas_software_x11_new(
+    _G.ee = ecore_evas_software_x11_new(
             NULL, /* const char * disp_name */
             0,    /*  Ecore_X_Window parent */
-            0, 0, w, h);
+            0, 0, _G.w, _G.h);
 
-    ecore_evas_title_set(ee, "EEnavders.fractal");
-    ecore_evas_borderless_set(ee, 0);
-    ecore_evas_show(ee);
-    evas = ecore_evas_get(ee);
+    ecore_evas_title_set(_G.ee, "EEnavders.fractal");
+    ecore_evas_borderless_set(_G.ee, 0);
+    ecore_evas_show(_G.ee);
+    _G.evas = ecore_evas_get(_G.ee);
 
-    o_bg = evas_object_image_add(evas);
+    o_bg = evas_object_image_add(_G.evas);
 
-    evas_object_resize(o_bg, w, h);
+    evas_object_resize(o_bg, _G.w, _G.h);
     evas_object_layer_set(o_bg, -999);
     evas_object_image_file_set(
             o_bg,
@@ -44,11 +48,6 @@ main(void)
     /*evas_object_pass_events_set(o_bg, 1);*/
     evas_object_show(o_bg);
 
-
-    o = evas_object_image_add(evas);
-
-
-    evas_object_show(o);
 
     ecore_main_loop_begin();
 
