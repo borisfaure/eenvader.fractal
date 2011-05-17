@@ -15,10 +15,40 @@ static struct {
 #define _G eenvaders_g
 
 
+static Evas_Object*
+new_eenvader(void)
+{
+    Evas_Object *o = NULL;
+    uint16_t u = lrand48();
+    int *data = calloc(7 * 7, sizeof(int));
+
+    if (!data) {
+        perror(NULL);
+        exit(1);
+    }
+
+    for (int i = 0; i < 15; i++) {
+        if (u & (1 << i)) {
+            data[7 + 7*(i/3) + 1 + i%3] = 0xffffffff;
+            data[7 + 7*(i/3) + 5 - i%3] = 0xffffffff;
+        }
+    }
+
+    o = evas_object_image_add(_G.evas);
+    evas_object_resize(o, 7, 7);
+    evas_object_image_fill_set(o, 0, 0, 7, 7);
+    evas_object_image_colorspace_set (o, EVAS_COLORSPACE_ARGB8888);
+    evas_object_image_alpha_set (o, 1);
+    evas_object_image_size_set (o, 7, 7);
+    evas_object_image_data_set(o, (void *) data);
+
+    return o;
+}
 
 int
 main(void)
 {
+    Evas_Object *o;
     long int seedval;
     int fd;
 
@@ -52,6 +82,9 @@ main(void)
     ecore_evas_show(_G.ee);
     _G.evas = ecore_evas_get(_G.ee);
 
+    o = new_eenvader();
+    evas_object_focus_set(o, EINA_TRUE);
+    evas_object_show(o);
 
     ecore_main_loop_begin();
 
