@@ -7,6 +7,7 @@
 #include    <Ecore.h>
 #include    <Ecore_Evas.h>
 #include    <math.h>
+
 static struct {
     Ecore_Evas  *ee;
     Evas        *evas;
@@ -34,11 +35,12 @@ new_eenvader(void)
         }
     }
 
-    o = evas_object_image_add(_G.evas);
+    o = evas_object_image_filled_add(_G.evas);
     evas_object_resize(o, 7, 7);
     evas_object_image_fill_set(o, 0, 0, 7, 7);
     evas_object_image_colorspace_set (o, EVAS_COLORSPACE_ARGB8888);
     evas_object_image_alpha_set (o, 1);
+    evas_object_image_smooth_scale_set(o, 0);
     evas_object_image_size_set (o, 7, 7);
     evas_object_image_data_set(o, (void *) data);
 
@@ -83,7 +85,7 @@ main(void)
     _G.evas = ecore_evas_get(_G.ee);
 
     o = new_eenvader();
-    evas_object_focus_set(o, EINA_TRUE);
+    evas_object_resize(o, 280, 280);
     evas_object_show(o);
 
     ecore_main_loop_begin();
