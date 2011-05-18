@@ -6,12 +6,13 @@
 #include    <Evas.h>
 #include    <Ecore.h>
 #include    <Ecore_Evas.h>
-#include    <math.h>
+
+#define MIN(a,b) (((a)<(b))?(a):(b))
 
 static struct {
     Ecore_Evas  *ee;
     Evas        *evas;
-    Evas_Coord   x, y, w, h;
+    Evas_Coord   w, h;
 } eenvaders_g;
 #define _G eenvaders_g
 
@@ -36,29 +37,88 @@ new_eenvader(void)
     }
 
     o = evas_object_image_filled_add(_G.evas);
-    evas_object_resize(o, 7, 7);
     evas_object_image_fill_set(o, 0, 0, 7, 7);
-    evas_object_image_colorspace_set (o, EVAS_COLORSPACE_ARGB8888);
-    evas_object_image_alpha_set (o, 1);
-    evas_object_image_smooth_scale_set(o, 0);
+    evas_object_image_smooth_scale_set(o, EINA_FALSE);
     evas_object_image_size_set (o, 7, 7);
     evas_object_image_data_set(o, (void *) data);
 
     return o;
 }
 
+static int
+square_ceil_7(int n)
+{
+    /* XXX: considering n >= 7 */
+    int r = 1;
+
+    n /= 7;
+
+    while (n >>= 1) {
+        r <<= 1;
+    }
+    return r * 7;
+}
+
+void draw_eenvaders(int x, int y, int w, int h)
+{
+    Evas_Object *o;
+    int d;
+
+    if (w < 7 || h < 7)
+        return;
+
+    d = square_ceil_7(MIN(w,h));
+
+    o = new_eenvader();
+    evas_object_resize(o, d, d);
+
+    switch(lrand48() & 3) {
+      case 0:
+        /* top-left */
+        evas_object_move(o, x, y);
+        evas_object_show(o);
+
+        draw_eenvaders(x+d, y, w-d, h); /* right */
+        draw_eenvaders(x, y+d, d, h-d); /* bottom */
+        break;
+      case 1:
+        /* top-right */
+        evas_object_move(o, x+w-d, y);
+        evas_object_show(o);
+
+        draw_eenvaders(x, y+d, w, h-d); /* bottom */
+        draw_eenvaders(x, y, w-d, d); /* left */
+        break;
+      case 2:
+        /* bottom-right */
+        evas_object_move(o, x+w-d, y+h-d);
+        evas_object_show(o);
+
+        draw_eenvaders(x, y, w-d, h); /* left */
+        draw_eenvaders(x+w-d, y, d, h-d); /* top */
+        break;
+      case 3:
+        /* bottom-left */
+        evas_object_move(o, x, y+h-d);
+        evas_object_show(o);
+
+        draw_eenvaders(x, y, w, h-d); /* top */
+        draw_eenvaders(x+d, y+h-d, w-d, d); /* right */
+        break;
+    }
+}
+
 int
 main(void)
 {
-    Evas_Object *o;
     long int seedval;
     int fd;
 
     if (!ecore_evas_init())
         return -1;
 
-    _G.w = 500;
-    _G.h = 300;
+    _G.w = 600;
+    _G.h = 350;
 
 
     /*open file */
@@ -84,9 +144,7 @@ main(void)
     ecore_evas_show(_G.ee);
     _G.evas = ecore_evas_get(_G.ee);
 
-    o = new_eenvader();
-    evas_object_resize(o, 280, 280);
-    evas_object_show(o);
+    draw_eenvaders(0, 0, _G.w, _G.h);
 
     ecore_main_loop_begin();
 

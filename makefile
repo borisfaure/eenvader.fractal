@@ -6,7 +6,7 @@ ifeq ($(DEBUG),yes)
 else
     CFLAGS = -Wall -Wextra -O2 -std=gnu99
 endif
-LDFLAGS = -lm -pg `pkg-config --libs --cflags ecore-evas`
+LDFLAGS = -lm `pkg-config --libs --cflags ecore-evas`
 IFLAGS  = `pkg-config --cflags ecore-evas`
 
 EXEC = eenvaders
