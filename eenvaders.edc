@@ -1,0 +1,22 @@
+externals {
+    external: "eenvaders";
+}
+
+collections {
+    group {
+        name: "eenvaders";
+
+        parts {
+            part {
+                name: "eenvaders";
+                type: EXTERNAL;
+                source: "eenvaders";
+
+                description {
+                    state: "default" 0.0;
+                }
+            }
+
+        }
+    }
+}
