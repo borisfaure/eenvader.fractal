@@ -174,7 +174,7 @@ eenvaders_ext_translate(void *data, const char *orig)
 Eina_Bool
 eenvaders_init(void)
 {
-    printf("plop\n");
+    edje_external_type_register("eenvaders", &_G.ext_type);
 
     return EINA_TRUE;
 }
@@ -182,6 +182,7 @@ eenvaders_init(void)
 void
 eenvaders_shutdown(void)
 {
+    edje_external_type_unregister("eenvaders");
 }
 
 EINA_MODULE_INIT(eenvaders_init);
