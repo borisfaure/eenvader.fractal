@@ -47,6 +47,7 @@ static Evas_Object *
 eenvaders_ext_preview_add(void *data, Evas *e);
 static const char*
 eenvaders_ext_translate(void *data, const char *orig);
+/* }}} */
 
 static struct {
     Edje_External_Type ext_type;
@@ -72,6 +73,7 @@ static struct {
 };
 #define _G eenvaders_g
 
+/* Smart Object */
 /* Edje External -{{{-*/
 
 static Evas_Object *
