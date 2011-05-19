@@ -7,6 +7,9 @@
 #include    <Ecore.h>
 #include    <Ecore_Evas.h>
 
+#define BG 0xff002b36
+#define FG 0xff839496
+
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
 static struct {
@@ -30,13 +33,13 @@ new_eenvader(void)
         exit(1);
     }
     for (int i = 0; i < 7 * 7; i++) {
-        data[i] = 0xff002b36;
+        data[i] = BG;
     }
 
     for (int i = 0; i < 15; i++) {
         if (u & (1 << i)) {
-            data[7 + 7*(i/3) + 1 + i%3] = 0xff839496;
-            data[7 + 7*(i/3) + 5 - i%3] = 0xff839496;
+            data[7 + 7*(i/3) + 1 + i%3] = FG;
+            data[7 + 7*(i/3) + 5 - i%3] = FG;
         }
     }
 
@@ -149,7 +152,11 @@ main(void)
     _G.evas = ecore_evas_get(_G.ee);
 
     _G.bg  = evas_object_rectangle_add(_G.evas);
-    evas_object_color_set(_G.bg, 0x00, 0x2b, 0x36, 0xff);
+    evas_object_color_set(_G.bg,
+                          BG >> 24,
+                          (BG >> 16) & 0xff,
+                          (BG >> 8) & 0xff,
+                          BG & 0xff);
     evas_object_move(_G.bg, 0, 0);
     evas_object_resize(_G.bg, _G.w, _G.h);
     evas_object_show(_G.bg);
