@@ -13,6 +13,7 @@ static struct {
     Ecore_Evas  *ee;
     Evas        *evas;
     Evas_Coord   w, h;
+    Evas_Object *bg;
 } eenvaders_g;
 #define _G eenvaders_g
 
@@ -22,17 +23,20 @@ new_eenvader(void)
 {
     Evas_Object *o = NULL;
     uint16_t u = lrand48();
-    int *data = calloc(7 * 7, sizeof(int));
+    int *data = malloc(7 * 7 * sizeof(int));
 
     if (!data) {
         perror(NULL);
         exit(1);
     }
+    for (int i = 0; i < 7 * 7; i++) {
+        data[i] = 0xff002b36;
+    }
 
     for (int i = 0; i < 15; i++) {
         if (u & (1 << i)) {
-            data[7 + 7*(i/3) + 1 + i%3] = 0xffffffff;
-            data[7 + 7*(i/3) + 5 - i%3] = 0xffffffff;
+            data[7 + 7*(i/3) + 1 + i%3] = 0xff839496;
+            data[7 + 7*(i/3) + 5 - i%3] = 0xff839496;
         }
     }
 
@@ -143,6 +147,12 @@ main(void)
     ecore_evas_borderless_set(_G.ee, 0);
     ecore_evas_show(_G.ee);
     _G.evas = ecore_evas_get(_G.ee);
+
+    _G.bg  = evas_object_rectangle_add(_G.evas);
+    evas_object_color_set(_G.bg, 0x00, 0x2b, 0x36, 0xff);
+    evas_object_move(_G.bg, 0, 0);
+    evas_object_resize(_G.bg, _G.w, _G.h);
+    evas_object_show(_G.bg);
 
     draw_eenvaders(0, 0, _G.w, _G.h);
 
