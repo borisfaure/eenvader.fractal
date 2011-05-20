@@ -153,10 +153,10 @@ main(void)
 
     _G.bg  = evas_object_rectangle_add(_G.evas);
     evas_object_color_set(_G.bg,
-                          BG >> 24,
                           (BG >> 16) & 0xff,
                           (BG >> 8) & 0xff,
-                          BG & 0xff);
+                          BG & 0xff,
+                          BG >> 24);
     evas_object_move(_G.bg, 0, 0);
     evas_object_resize(_G.bg, _G.w, _G.h);
     evas_object_show(_G.bg);
