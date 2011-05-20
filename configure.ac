@@ -22,14 +22,15 @@ define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 AC_PROG_LIBTOOL
 
-PKG_CHECK_MODULES(EDJE, [edje])
-release=$(pkg-config --variable=release edje)
-MODULE_ARCH="$host_os-$host_cpu-$release"
+PKG_CHECK_MODULES(ECORE_EVAS, [ecore-evas])
+
+PKG_CHECK_MODULES(EDJE, [edje >= 0.5.0])
+vmaj=$(pkg-config --variable=vmaj edje)
+MODULE_ARCH="$host_os-$host_cpu-$vmaj.0.0"
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 # Find edje_cc
-PKG_CHECK_MODULES(EDJE, [edje >= 0.5.0])
 AC_ARG_WITH(edje-cc,
   AC_HELP_STRING([--with-edje-cc=PATH], [specify a specific path to edje_cc]),
   [
