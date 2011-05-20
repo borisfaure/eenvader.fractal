@@ -6,7 +6,7 @@ ifeq ($(DEBUG),yes)
 else
     CFLAGS = -Wall -Wextra -O2 -std=gnu99
 endif
-LDFLAGS = -lm `pkg-config --libs --cflags ecore-evas`
+LDFLAGS = `pkg-config --libs --cflags ecore-evas`
 IFLAGS_EXEC  = `pkg-config --cflags ecore-evas`
 IFLAGS_SO  = `pkg-config --cflags edje`
 
@@ -16,18 +16,23 @@ EXEC_OBJ= $(EXEC_SRC:.c=.o)
 
 SO = eenvaders.so
 SO_SRC= src/eenvaders_edje_external.c
-SO_OBJ= $(SO_SRC:.c=.o)
 
-all: $(EXEC) $(SO)
+EDJ = eenvaders.edj
+EDJ_SRC = data/eenvaders.edc
+
+all: $(EXEC) $(SO) $(EDJ)
+
+$(EDJ): $(EDJ_SRC)
+	edje_cc $(EDJ_SRC) $(EDJ)
 
 $(SO): $(SO_SRC)
-	$(CC) -Wall -fPIC $(CFLAGS) $(IFLAGS_SO) -c $(SO_SRC) -o $(SO_OBJ)
-	$(CC) -shared -Wl,-soname,$(SO) -o $(SO) $(SO_OBJ)
+	$(CC) -fPIC $(CFLAGS) $(IFLAGS_SO) -c src/eenvaders_edje_external.c -o src/eenvaders_edje_external.o
+	$(CC) -shared -Wl,-soname,$(SO) -o $(SO) src/eenvaders_edje_external.o
 
 $(EXEC): $(EXEC_SRC)
-	$(CC) -o $@ -c $(EXEC_SRC) $(CFLAGS) $(IFLAGS_EXEC)
+	$(CC) -o src/eenvaders.o -c src/eenvaders.c $(CFLAGS) $(IFLAGS_EXEC)
 	$(CC) $(EXEC_OBJ) -o $(EXEC) $(LDFLAGS)
 
 clean :
-	rm $(EXEC_OBJ) $(SO_OBJ)
+	rm eenvaders eenvaders.so eenvaders.edj src/*.o
 
