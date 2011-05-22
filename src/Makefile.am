@@ -19,8 +19,8 @@ EXTRA_PROGRAMS = eenvaders
 eenvaders_SOURCES = \
 	eenvaders_evas_smart.c \
 	eenvaders.c
-eenvaders_CPPFLAGS =\
-	@ECORE_EVAS@
+eenvaders_CPPFLAGS = \
+	@ECORE_EVAS_CFLAGS@
 eenvaders_LDADD = @ECORE_EVAS_LIBS@
 
 clean-local:
