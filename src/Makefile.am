@@ -17,6 +17,7 @@ bin_PROGRAMS = eenvaders
 EXTRA_PROGRAMS = eenvaders
 
 eenvaders_SOURCES = \
+	eenvaders_evas_smart.c \
 	eenvaders.c
 eenvaders_CPPFLAGS =\
 	@ECORE_EVAS@
