@@ -13,6 +13,7 @@
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 /* Prototypes -{{{-*/
+
 static Evas_Object *
 eenvaders_ext_add(void *data, Evas *evas, Evas_Object *parent,
                   const Eina_List *params, const char *part_name);
@@ -47,7 +48,9 @@ static Evas_Object *
 eenvaders_ext_preview_add(void *data, Evas *e);
 static const char*
 eenvaders_ext_translate(void *data, const char *orig);
+
 /* }}} */
+/* Globals -{{{-*/
 
 static struct {
     Edje_External_Type ext_type;
@@ -73,7 +76,7 @@ static struct {
 };
 #define _G eenvaders_g
 
-/* Smart Object */
+/* }}} */
 /* Edje External -{{{-*/
 
 static Evas_Object *
@@ -171,7 +174,7 @@ eenvaders_ext_translate(void *data, const char *orig)
     return NULL;
 }
 /* }}} */
-
+/* Init/Shutdown -{{{-*/
 
 Eina_Bool
 eenvaders_init(void)
@@ -189,3 +192,5 @@ eenvaders_shutdown(void)
 
 EINA_MODULE_INIT(eenvaders_init);
 EINA_MODULE_SHUTDOWN(eenvaders_shutdown);
+
+/* }}} */
