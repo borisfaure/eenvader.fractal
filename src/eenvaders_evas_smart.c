@@ -54,6 +54,110 @@ static struct {
 };
 
 /* }}} */
+/* Eenvaders functions -{{{-*/
+
+static Evas_Object*
+new_eenvader(Evas *evas, Eenvaders_Object *eo)
+{
+    Evas_Object *o = NULL;
+    uint16_t u = lrand48();
+    int *mem = malloc(7 * 7 * sizeof(int));
+
+    if (!mem) {
+        perror(NULL);
+        exit(1);
+    }
+    for (int i = 0; i < 7 * 7; i++) {
+        mem[i] = BG;
+    }
+
+    for (int i = 0; i < 15; i++) {
+        if (u & (1 << i)) {
+            mem[7 + 7*(i/3) + 1 + i%3] = FG;
+            mem[7 + 7*(i/3) + 5 - i%3] = FG;
+        }
+    }
+
+    o = evas_object_image_filled_add(evas);
+    evas_object_image_fill_set(o, 0, 0, 7, 7);
+    evas_object_image_smooth_scale_set(o, EINA_FALSE);
+    evas_object_image_size_set (o, 7, 7);
+    evas_object_image_data_set(o, (void *) mem);
+    evas_object_data_set(o, "m", (void *) mem);
+
+    eo->datas = eina_list_append(eo->datas, mem);
+
+    return o;
+}
+
+static int
+square_ceil_7(int n)
+{
+    /* XXX: considering n >= 7 */
+    int r = 1;
+
+    n /= 7;
+
+    while (n >>= 1) {
+        r <<= 1;
+    }
+    return r * 7;
+}
+
+static void
+draw_eenvaders(Evas_Object *smart_obj, Eenvaders_Object *eo,
+               int x, int y, int w, int h)
+{
+    Evas_Object *o;
+    int d;
+
+    if (w < 7 || h < 7)
+        return;
+
+    d = square_ceil_7(MIN(w,h));
+
+    o = new_eenvader(evas_object_evas_get(smart_obj), eo);
+    evas_object_resize(o, d, d);
+    evas_object_smart_member_add(o, smart_obj);
+
+    switch(lrand48() & 3) {
+      case 0:
+        /* top-left */
+        evas_object_move(o, x, y);
+        evas_object_show(o);
+
+        draw_eenvaders(smart_obj, eo, x+d, y, w-d, h); /* right */
+        draw_eenvaders(smart_obj, eo, x, y+d, d, h-d); /* bottom */
+        break;
+      case 1:
+        /* top-right */
+        evas_object_move(o, x+w-d, y);
+        evas_object_show(o);
+
+        draw_eenvaders(smart_obj, eo, x, y+d, w, h-d); /* bottom */
+        draw_eenvaders(smart_obj, eo, x, y, w-d, d); /* left */
+        break;
+      case 2:
+        /* bottom-right */
+        evas_object_move(o, x+w-d, y+h-d);
+        evas_object_show(o);
+
+        draw_eenvaders(smart_obj, eo, x, y, w-d, h); /* left */
+        draw_eenvaders(smart_obj, eo, x+w-d, y, d, h-d); /* top */
+        break;
+      case 3:
+        /* bottom-left */
+        evas_object_move(o, x, y+h-d);
+        evas_object_show(o);
+
+        draw_eenvaders(smart_obj, eo, x, y, w, h-d); /* top */
+        draw_eenvaders(smart_obj, eo, x+d, y+h-d, w-d, d); /* right */
+        break;
+    }
+}
+
+/* }}} */
+/* Smart Object -{{{-*/
 
 Evas_Object *
 eenvaders_smart_new(Evas *e)
@@ -61,14 +165,51 @@ eenvaders_smart_new(Evas *e)
     Evas_Object *result = NULL;
 
     if ((result = eenvaders_object_new(e))) {
-        Eenvaders_Object *data = NULL;
-
-        if ((data = evas_object_smart_data_get(result)))
+        if (evas_object_smart_data_get(result))
             return result;
         else
             evas_object_del(result);
     }
     return NULL;
+}
+
+static void
+eenvaders_mouse_down(void *data,
+                     Evas *evas,
+                     Evas_Object *obj,
+                     void *event_info)
+{
+    Evas_Event_Mouse_Up *evt = event_info;
+    Eenvaders_Object *eo;
+
+
+    if (evt->button != 1)
+        return;
+    if ((eo = evas_object_smart_data_get(obj))) {
+        Evas_Object *child;
+        Evas_Coord x, y, w, h;
+
+        x = evt->canvas.x;
+        y = evt->canvas.y;
+
+        child = evas_object_top_at_xy_get(evas, x, y,
+                                          EINA_TRUE, EINA_FALSE);
+        if (child) {
+    puts("click boom");
+            void *mem;
+
+            mem = evas_object_data_del(child, "m");
+            printf("%p %p %p\n", mem, obj, child);
+            if (!mem)
+                return;
+
+            free(mem);
+            evas_object_geometry_get(child, &x, &y, &w, &h);
+            evas_object_smart_member_del(child);
+            evas_object_del(child);
+            draw_eenvaders(obj, eo, x, y, w, h);
+        }
+    }
 }
 
 static Evas_Object *
@@ -78,6 +219,11 @@ eenvaders_object_new(Evas *evas)
 
     eenvaders_object = evas_object_smart_add(evas,
                                 _eenvaders_object_smart_get());
+
+    evas_object_event_callback_add(eenvaders_object,
+                                   EVAS_CALLBACK_MOUSE_DOWN,
+                                   eenvaders_mouse_down,
+                                   NULL);
     return eenvaders_object;
 }
 
@@ -149,106 +295,6 @@ _eenvaders_object_move(Evas_Object *o, Evas_Coord x, Evas_Coord y)
     }
 }
 
-static Evas_Object*
-new_eenvader(Evas *evas, Eenvaders_Object *eo)
-{
-    Evas_Object *o = NULL;
-    uint16_t u = lrand48();
-    int *mem = malloc(7 * 7 * sizeof(int));
-
-    if (!mem) {
-        perror(NULL);
-        exit(1);
-    }
-    for (int i = 0; i < 7 * 7; i++) {
-        mem[i] = BG;
-    }
-
-    for (int i = 0; i < 15; i++) {
-        if (u & (1 << i)) {
-            mem[7 + 7*(i/3) + 1 + i%3] = FG;
-            mem[7 + 7*(i/3) + 5 - i%3] = FG;
-        }
-    }
-
-    o = evas_object_image_filled_add(evas);
-    evas_object_image_fill_set(o, 0, 0, 7, 7);
-    evas_object_image_smooth_scale_set(o, EINA_FALSE);
-    evas_object_image_size_set (o, 7, 7);
-    evas_object_image_data_set(o, (void *) mem);
-    evas_object_data_set(o, "m", (void *) mem);
-
-    eo->datas = eina_list_append(eo->datas, mem);
-
-    return o;
-}
-
-static int
-square_ceil_7(int n)
-{
-    /* XXX: considering n >= 7 */
-    int r = 1;
-
-    n /= 7;
-
-    while (n >>= 1) {
-        r <<= 1;
-    }
-    return r * 7;
-}
-
-void
-draw_eenvaders(Evas_Object *smart_obj, Eenvaders_Object *eo,
-               int x, int y, int w, int h)
-{
-    Evas_Object *o;
-    int d;
-
-    if (w < 7 || h < 7)
-        return;
-
-    d = square_ceil_7(MIN(w,h));
-
-    o = new_eenvader(evas_object_evas_get(smart_obj), eo);
-    evas_object_resize(o, d, d);
-    evas_object_smart_member_add(o, smart_obj);
-
-    switch(lrand48() & 3) {
-      case 0:
-        /* top-left */
-        evas_object_move(o, x, y);
-        evas_object_show(o);
-
-        draw_eenvaders(smart_obj, eo, x+d, y, w-d, h); /* right */
-        draw_eenvaders(smart_obj, eo, x, y+d, d, h-d); /* bottom */
-        break;
-      case 1:
-        /* top-right */
-        evas_object_move(o, x+w-d, y);
-        evas_object_show(o);
-
-        draw_eenvaders(smart_obj, eo, x, y+d, w, h-d); /* bottom */
-        draw_eenvaders(smart_obj, eo, x, y, w-d, d); /* left */
-        break;
-      case 2:
-        /* bottom-right */
-        evas_object_move(o, x+w-d, y+h-d);
-        evas_object_show(o);
-
-        draw_eenvaders(smart_obj, eo, x, y, w-d, h); /* left */
-        draw_eenvaders(smart_obj, eo, x+w-d, y, d, h-d); /* top */
-        break;
-      case 3:
-        /* bottom-left */
-        evas_object_move(o, x, y+h-d);
-        evas_object_show(o);
-
-        draw_eenvaders(smart_obj, eo, x, y, w, h-d); /* top */
-        draw_eenvaders(smart_obj, eo, x+d, y+h-d, w-d, d); /* right */
-        break;
-    }
-}
-
 static void
 _eenvaders_object_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
 {
@@ -276,5 +322,4 @@ _eenvaders_object_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
     }
 }
 
-
-
+/* }}} */
