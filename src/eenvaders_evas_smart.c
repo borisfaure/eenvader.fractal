@@ -231,13 +231,25 @@ draw_eenvaders(Evas_Object *smart_obj, Eenvaders_Object *eo,
 static void
 _eenvaders_object_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
 {
-    Eenvaders_Object *data;
+    Eenvaders_Object *eo;
 
-    if ((data = evas_object_smart_data_get(o))) {
+    if ((eo = evas_object_smart_data_get(o))) {
         Evas_Coord x, y;
+        const Eina_List *l, *l_next;
+        Evas_Object *obj;
+        void *mem;
+        Eina_List *list;
+
+        list = evas_object_smart_members_get(o);
+        EINA_LIST_FOREACH_SAFE(list, l, l_next, obj) {
+            evas_object_smart_member_del(obj);
+            evas_object_del(obj);
+        }
+        EINA_LIST_FREE(eo->datas, mem)
+            free(mem);
 
         evas_object_geometry_get(o, &x, &y, NULL, NULL);
-        draw_eenvaders(o, data, x, y, w, h);
+        draw_eenvaders(o, eo, x, y, w, h);
     }
 }
 
