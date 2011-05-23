@@ -19,14 +19,22 @@ static struct {
     Evas        *evas;
     Evas_Coord   w, h;
     Evas_Object *bg;
+    Evas_Object *eenvaders;
 } eenvaders_g;
 #define _G eenvaders_g
 
+static void resize_cb(Ecore_Evas *ee)
+{
+    int w, h;
+
+    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+    evas_object_resize(_G.bg, w, h);
+    evas_object_resize(_G.eenvaders, w, h);
+}
 
 int
 main(void)
 {
-    Evas_Object *o;
     long int seedval;
     int fd;
 
@@ -70,9 +78,11 @@ main(void)
     evas_object_resize(_G.bg, _G.w, _G.h);
     evas_object_show(_G.bg);
 
-    o = eenvaders_smart_new(_G.evas);
-    evas_object_resize(o, _G.w, _G.h);
-    evas_object_show(o);
+    _G.eenvaders = eenvaders_smart_new(_G.evas);
+    evas_object_resize(_G.eenvaders, _G.w, _G.h);
+    evas_object_show(_G.eenvaders);
+
+    ecore_evas_callback_resize_set(_G.ee, &resize_cb);
 
     ecore_main_loop_begin();
 
