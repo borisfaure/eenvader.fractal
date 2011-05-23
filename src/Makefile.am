@@ -7,7 +7,9 @@ INCLUDES = -I. \
 
 pkgdir = $(datadir)/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
-module_la_SOURCES = eenvaders_edje_external.c
+module_la_SOURCES = \
+	eenvaders_evas_smart.c \
+	eenvaders_edje_external.c
 
 module_la_LIBADD = @EDJE_LIBS@
 module_la_LDFLAGS = -module -avoid-version

@@ -8,10 +8,8 @@
 #include    <Ecore_Evas.h>
 #include    <Edje.h>
 
-#define BG 0xff002b36
-#define FG 0xff839496
+#include "eenvaders_evas_smart.h"
 
-#define MIN(a,b) (((a)<(b))?(a):(b))
 /* Prototypes -{{{-*/
 
 static Evas_Object *
@@ -83,8 +81,7 @@ static Evas_Object *
 eenvaders_ext_add(void *data, Evas *evas, Evas_Object *parent,
                   const Eina_List *params, const char *part_name)
 {
-    /* TODO */
-    return NULL;
+    return eenvaders_smart_new(evas);
 }
 
 static void
