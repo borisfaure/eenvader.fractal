@@ -111,21 +111,41 @@ _eenvaders_object_del(Evas_Object *o)
     Eenvaders_Object *data;
 
     if ((data = evas_object_smart_data_get(o))) {
+        const Eina_List *l, *l_next;
+        Evas_Object *child;
         void *mem;
+        Eina_List *list;
 
-        EINA_LIST_FREE(data->datas, mem)
+        list = evas_object_smart_members_get(o);
+        EINA_LIST_FOREACH_SAFE(list, l, l_next, child) {
+            void *mem;
+
+            evas_object_smart_member_del(child);
+            evas_object_del(child);
+            mem = evas_object_data_del(child, "m");
             free(mem);
-        free(data);
+
+        }
     }
 }
 
 static void
 _eenvaders_object_move(Evas_Object *o, Evas_Coord x, Evas_Coord y)
 {
-    Eenvaders_Object *data;
+    Evas_Coord orig_x, orig_y, dx, dy;
+    Eina_List *lst, *l;
+    void *data;
 
-    if ((data = evas_object_smart_data_get(o))) {
-        /* TODO */
+    evas_object_geometry_get(o, &orig_x, &orig_y, NULL, NULL);
+    dx = x - orig_x;
+    dy = y - orig_y;
+
+    lst = evas_object_smart_members_get(o);
+    EINA_LIST_FOREACH(lst, l, data) {
+        Evas_Object *child = data;
+
+        evas_object_geometry_get(child, &orig_x, &orig_y, NULL, NULL);
+        evas_object_move(child, orig_x + dx, orig_y + dy);
     }
 }
 
@@ -156,6 +176,7 @@ new_eenvader(Evas *evas, Eenvaders_Object *eo)
     evas_object_image_smooth_scale_set(o, EINA_FALSE);
     evas_object_image_size_set (o, 7, 7);
     evas_object_image_data_set(o, (void *) mem);
+    evas_object_data_set(o, "m", (void *) mem);
 
     eo->datas = eina_list_append(eo->datas, mem);
 
@@ -236,17 +257,19 @@ _eenvaders_object_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
     if ((eo = evas_object_smart_data_get(o))) {
         Evas_Coord x, y;
         const Eina_List *l, *l_next;
-        Evas_Object *obj;
+        Evas_Object *child;
         void *mem;
         Eina_List *list;
 
         list = evas_object_smart_members_get(o);
-        EINA_LIST_FOREACH_SAFE(list, l, l_next, obj) {
-            evas_object_smart_member_del(obj);
-            evas_object_del(obj);
-        }
-        EINA_LIST_FREE(eo->datas, mem)
+        EINA_LIST_FOREACH_SAFE(list, l, l_next, child) {
+            void *mem;
+
+            mem = evas_object_data_del(child, "m");
             free(mem);
+            evas_object_smart_member_del(child);
+            evas_object_del(child);
+        }
 
         evas_object_geometry_get(o, &x, &y, NULL, NULL);
         draw_eenvaders(o, eo, x, y, w, h);
