@@ -26,9 +26,7 @@
 /src/Makefile
 /src/Makefile.in
 /src/eenvaders
-/src/eenvaders-eenvaders.o
-/src/eenvaders_edje_external.lo
-/src/eenvaders_edje_external.o
-/src/eenvaders-eenvaders_evas_smart.o
+/src/*.lo
+/src/*.o
 /src/module.la
 /stamp-h1
