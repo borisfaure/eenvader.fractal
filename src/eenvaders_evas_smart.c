@@ -24,6 +24,9 @@ static void _eenvaders_object_color_set(Evas_Object *o, int r, int g, int b, int
 static void _eenvaders_object_clip_set(Evas_Object *o, Evas_Object *clip);
 static void _eenvaders_object_clip_unset(Evas_Object *o);
 
+static void
+draw_eenvaders(Evas_Object *smart_obj, Eenvaders_Object *eo,
+               int x, int y, int w, int h);
 /* }}} */
 /* Globals -{{{-*/
 
@@ -56,8 +59,40 @@ static struct {
 /* }}} */
 /* Eenvaders functions -{{{-*/
 
+static void
+eenvaders_mouse_down(void *data,
+                     Evas *evas,
+                     Evas_Object *child,
+                     void *event_info)
+{
+    Evas_Coord x, y, w, h;
+    Eenvaders_Object *eo;
+    Evas_Event_Mouse_Up *evt = event_info;
+    Evas_Object *parent = data;
+    void *mem;
+
+    if (evt->button != 1)
+        return;
+    eo = evas_object_smart_data_get(parent);
+    if (!eo)
+        return;
+
+    x = evt->canvas.x;
+    y = evt->canvas.y;
+
+    mem = evas_object_data_del(child, "m");
+    if (!mem)
+        return;
+
+    free(mem);
+    evas_object_geometry_get(child, &x, &y, &w, &h);
+    evas_object_smart_member_del(child);
+    evas_object_del(child);
+    draw_eenvaders(parent, eo, x+3, y+3, w-3, h-3);
+}
+
 static Evas_Object*
-new_eenvader(Evas *evas, Eenvaders_Object *eo)
+new_eenvader(Evas *evas, Evas_Object *smart_obj, Eenvaders_Object *eo)
 {
     Evas_Object *o = NULL;
     uint16_t u = lrand48();
@@ -84,6 +119,11 @@ new_eenvader(Evas *evas, Eenvaders_Object *eo)
     evas_object_image_size_set (o, 7, 7);
     evas_object_image_data_set(o, (void *) mem);
     evas_object_data_set(o, "m", (void *) mem);
+
+    evas_object_event_callback_add(o,
+                                   EVAS_CALLBACK_MOUSE_DOWN,
+                                   eenvaders_mouse_down,
+                                   smart_obj);
 
     eo->datas = eina_list_append(eo->datas, mem);
 
@@ -116,7 +156,7 @@ draw_eenvaders(Evas_Object *smart_obj, Eenvaders_Object *eo,
 
     d = square_ceil_7(MIN(w,h));
 
-    o = new_eenvader(evas_object_evas_get(smart_obj), eo);
+    o = new_eenvader(evas_object_evas_get(smart_obj), smart_obj, eo);
     evas_object_resize(o, d, d);
     evas_object_smart_member_add(o, smart_obj);
 
@@ -173,45 +213,6 @@ eenvaders_smart_new(Evas *e)
     return NULL;
 }
 
-static void
-eenvaders_mouse_down(void *data,
-                     Evas *evas,
-                     Evas_Object *obj,
-                     void *event_info)
-{
-    Evas_Event_Mouse_Up *evt = event_info;
-    Eenvaders_Object *eo;
-
-
-    if (evt->button != 1)
-        return;
-    if ((eo = evas_object_smart_data_get(obj))) {
-        Evas_Object *child;
-        Evas_Coord x, y, w, h;
-
-        x = evt->canvas.x;
-        y = evt->canvas.y;
-
-        child = evas_object_top_at_xy_get(evas, x, y,
-                                          EINA_TRUE, EINA_FALSE);
-        if (child) {
-    puts("click boom");
-            void *mem;
-
-            mem = evas_object_data_del(child, "m");
-            printf("%p %p %p\n", mem, obj, child);
-            if (!mem)
-                return;
-
-            free(mem);
-            evas_object_geometry_get(child, &x, &y, &w, &h);
-            evas_object_smart_member_del(child);
-            evas_object_del(child);
-            draw_eenvaders(obj, eo, x, y, w, h);
-        }
-    }
-}
-
 static Evas_Object *
 eenvaders_object_new(Evas *evas)
 {
@@ -220,10 +221,6 @@ eenvaders_object_new(Evas *evas)
     eenvaders_object = evas_object_smart_add(evas,
                                 _eenvaders_object_smart_get());
 
-    evas_object_event_callback_add(eenvaders_object,
-                                   EVAS_CALLBACK_MOUSE_DOWN,
-                                   eenvaders_mouse_down,
-                                   NULL);
     return eenvaders_object;
 }
 
