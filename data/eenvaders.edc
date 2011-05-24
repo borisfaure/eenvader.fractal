@@ -15,6 +15,14 @@ collections {
 
         parts {
             part {
+                name: "bg";
+                type: RECT;
+                description {
+                    state: "default" 0.0;
+                    color: 0 43 54 255;
+                }
+            }
+            part {
                 name: "eenvaders";
                 type: EXTERNAL;
                 source: "eenvaders";
