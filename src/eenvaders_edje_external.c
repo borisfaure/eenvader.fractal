@@ -96,7 +96,7 @@ static void
 eenvaders_ext_signal_emit(void *data, Evas_Object *obj,
                           const char *emission, const char *source)
 {
-    /* TODO */
+    evas_object_smart_callback_call(obj, emission, NULL);
 }
 
 static Eina_Bool
