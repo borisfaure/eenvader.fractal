@@ -213,6 +213,33 @@ eenvaders_smart_new(Evas *e)
     return NULL;
 }
 
+static void
+eenvaders_on_refresh(void *data, Evas_Object *o, void *event_info)
+{
+    Eenvaders_Object *eo;
+
+    if ((eo = evas_object_smart_data_get(o))) {
+        Evas_Coord x, y, w, h;
+        const Eina_List *l, *l_next;
+        Evas_Object *child;
+        void *mem;
+        Eina_List *list;
+
+        list = evas_object_smart_members_get(o);
+        EINA_LIST_FOREACH_SAFE(list, l, l_next, child) {
+            void *mem;
+
+            mem = evas_object_data_del(child, "m");
+            free(mem);
+            evas_object_smart_member_del(child);
+            evas_object_del(child);
+        }
+
+        evas_object_geometry_get(o, &x, &y, &w, &h);
+        draw_eenvaders(o, eo, x, y, w, h);
+    }
+}
+
 static Evas_Object *
 eenvaders_object_new(Evas *evas)
 {
@@ -220,6 +247,10 @@ eenvaders_object_new(Evas *evas)
 
     eenvaders_object = evas_object_smart_add(evas,
                                 _eenvaders_object_smart_get());
+    evas_object_smart_callback_add(eenvaders_object,
+                                   "refresh",
+                                   eenvaders_on_refresh,
+                                   NULL);
 
     return eenvaders_object;
 }

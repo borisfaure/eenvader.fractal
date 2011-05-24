@@ -23,13 +23,24 @@ static struct {
 } eenvaders_g;
 #define _G eenvaders_g
 
-static void resize_cb(Ecore_Evas *ee)
+static void
+resize_cb(Ecore_Evas *ee)
 {
     int w, h;
 
     ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
     evas_object_resize(_G.bg, w, h);
     evas_object_resize(_G.eenvaders, w, h);
+}
+
+static Eina_Bool
+timer_cb(void *data)
+{
+    Evas_Object *o = (Evas_Object *)data;
+
+    evas_object_smart_callback_call(o, "refresh", NULL);
+
+    return EINA_TRUE;
 }
 
 int
@@ -82,11 +93,14 @@ main(void)
     evas_object_resize(_G.eenvaders, _G.w, _G.h);
     evas_object_show(_G.eenvaders);
 
+    ecore_timer_add(3, timer_cb, _G.eenvaders);
+
     ecore_evas_callback_resize_set(_G.ee, &resize_cb);
 
     ecore_main_loop_begin();
 
     ecore_evas_shutdown();
     ecore_shutdown();
+
     return 0;
 }
