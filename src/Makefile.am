@@ -16,7 +16,6 @@ module_la_LDFLAGS = -module -avoid-version
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 bin_PROGRAMS = eenvaders
-EXTRA_PROGRAMS = eenvaders
 
 eenvaders_SOURCES = \
 	eenvaders_evas_smart.c \
