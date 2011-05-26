@@ -176,6 +176,15 @@ eenvaders_ext_translate(void *data, const char *orig)
 Eina_Bool
 eenvaders_init(void)
 {
+    long int seedval = time(NULL);
+    int fd;
+
+    if ((fd = open("/dev/random", O_RDONLY)) >= 0) {
+        read(fd, &seedval, sizeof(seedval));
+        close(fd);
+    }
+    srand48(seedval);
+
     edje_external_type_register("eenvaders", &_G.ext_type);
 
     return EINA_TRUE;
