@@ -71,8 +71,6 @@ eenvaders_mouse_down(void *data,
     Evas_Object *parent = data;
     void *mem;
 
-    if (evt->button != 1)
-        return;
     eo = evas_object_smart_data_get(parent);
     if (!eo)
         return;
