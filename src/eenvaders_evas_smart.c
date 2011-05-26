@@ -94,14 +94,11 @@ new_eenvader(Evas *evas, Evas_Object *smart_obj, Eenvaders_Object *eo)
 {
     Evas_Object *o = NULL;
     uint16_t u = lrand48();
-    int *mem = malloc(7 * 7 * sizeof(int));
+    int *mem = calloc(7 * 7, sizeof(int));
 
     if (!mem) {
         perror(NULL);
         exit(1);
-    }
-    for (int i = 0; i < 7 * 7; i++) {
-        mem[i] = BG;
     }
 
     for (int i = 0; i < 15; i++) {
@@ -112,6 +109,7 @@ new_eenvader(Evas *evas, Evas_Object *smart_obj, Eenvaders_Object *eo)
     }
 
     o = evas_object_image_filled_add(evas);
+    evas_object_image_alpha_set(o, EINA_TRUE);
     evas_object_image_fill_set(o, 0, 0, 7, 7);
     evas_object_image_smooth_scale_set(o, EINA_FALSE);
     evas_object_image_size_set (o, 7, 7);
