@@ -93,7 +93,7 @@ static Evas_Object*
 new_eenvader(Evas *evas, Evas_Object *smart_obj, Eenvaders_Object *eo)
 {
     Evas_Object *o = NULL;
-    uint16_t u = lrand48();
+    uint16_t u = rand();
     int *mem = calloc(7 * 7, sizeof(int));
 
     if (!mem) {
@@ -156,7 +156,7 @@ draw_eenvaders(Evas_Object *smart_obj, Eenvaders_Object *eo,
     evas_object_resize(o, d, d);
     evas_object_smart_member_add(o, smart_obj);
 
-    switch(lrand48() & 3) {
+    switch(rand() & 3) {
       case 0:
         /* top-left */
         evas_object_move(o, x, y);

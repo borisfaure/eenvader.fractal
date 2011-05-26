@@ -46,7 +46,7 @@ timer_cb(void *data)
 int
 main(void)
 {
-    long int seedval;
+    unsigned int seedval;
     int fd;
 
     if (!ecore_evas_init())
@@ -67,7 +67,7 @@ main(void)
        exit(1);
     }
     close(fd);
-    srand48(seedval);
+    srand(seedval);
 
     _G.ee = ecore_evas_software_x11_new(
             NULL, /* const char * disp_name */
