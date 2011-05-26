@@ -4,7 +4,7 @@ externals {
 
 collections {
     group {
-        name: "eenvaders";
+        name: "e/desktop/background";
 
         script {
             public clock_cb(unused) {
