@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 EDJE_FLAGS = -v
 
-filesdir = $(datadir_edj)
+filesdir = @datadir_edj@
 files_DATA = eenvaders.edj
 
 EXTRA_DIST = eenvaders.edc

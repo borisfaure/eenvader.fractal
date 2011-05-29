@@ -55,6 +55,7 @@ AC_ARG_ENABLE(homedir-install,
    datadir_edj="${HOME}/.e/e/backgrounds"
    ]
 )
+AC_SUBST(datadir_edj)
 
 AC_OUTPUT([
 Makefile
