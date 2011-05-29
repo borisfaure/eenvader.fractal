@@ -15,4 +15,4 @@ clean-local:
 	 rm -rf eenvaders.edj *~
 
 uninstall:
-	 rm -rf $(DESTDIR)$(datadir_edj)/eenvaders.edj
+	 rm -rf $(DESTDIR)@datadir_edj@/eenvaders.edj
