@@ -105,7 +105,6 @@ new_eenvader(Evas *evas, Evas_Object *smart_obj)
     evas_object_image_size_set (o, 7, 7);
     evas_object_image_data_set(o, (void *) mem);
     evas_object_data_set(o, "m", (void *) mem);
-    printf("MALLOC -> %p\n", mem);
 
     evas_object_event_callback_add(o,
                                    EVAS_CALLBACK_MOUSE_DOWN,
@@ -204,7 +203,6 @@ eenvaders_on_refresh(void *data, Evas_Object *o, void *event_info)
         void *mem;
 
         mem = evas_object_data_del(child, "m");
-        printf("FREE   -> %p\n", mem);
         free(mem);
         evas_object_smart_member_del(child);
         evas_object_del(child);
