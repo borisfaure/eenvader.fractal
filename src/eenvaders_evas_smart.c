@@ -193,17 +193,18 @@ static void
 eenvaders_on_refresh(void *data, Evas_Object *o, void *event_info)
 {
     Evas_Coord x, y, w, h;
-    const Eina_List *l, *l_next;
     Evas_Object *child;
     void *mem;
     Eina_List *list;
 
     list = evas_object_smart_members_get(o);
-    EINA_LIST_FOREACH_SAFE(list, l, l_next, child) {
+    EINA_LIST_FREE(list, child) {
         void *mem;
 
         mem = evas_object_data_del(child, "m");
         free(mem);
+        evas_object_event_callback_del(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                       eenvaders_mouse_down);
         evas_object_smart_member_del(child);
         evas_object_del(child);
     }
@@ -242,13 +243,12 @@ _eenvaders_object_smart_get(void)
 static void
 _eenvaders_object_del(Evas_Object *o)
 {
-    const Eina_List *l, *l_next;
     Evas_Object *child;
     void *mem;
     Eina_List *list;
 
     list = evas_object_smart_members_get(o);
-    EINA_LIST_FOREACH_SAFE(list, l, l_next, child) {
+    EINA_LIST_FREE(list, child) {
         void *mem;
 
         evas_object_smart_member_del(child);
@@ -263,7 +263,7 @@ static void
 _eenvaders_object_move(Evas_Object *o, Evas_Coord x, Evas_Coord y)
 {
     Evas_Coord orig_x, orig_y, dx, dy;
-    Eina_List *lst, *l;
+    Eina_List *lst;
     void *data;
 
     evas_object_geometry_get(o, &orig_x, &orig_y, NULL, NULL);
@@ -271,7 +271,7 @@ _eenvaders_object_move(Evas_Object *o, Evas_Coord x, Evas_Coord y)
     dy = y - orig_y;
 
     lst = evas_object_smart_members_get(o);
-    EINA_LIST_FOREACH(lst, l, data) {
+    EINA_LIST_FREE(lst, data) {
         Evas_Object *child = data;
 
         evas_object_geometry_get(child, &orig_x, &orig_y, NULL, NULL);
@@ -283,13 +283,12 @@ static void
 _eenvaders_object_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
 {
     Evas_Coord x, y;
-    const Eina_List *l, *l_next;
     Evas_Object *child;
     void *mem;
     Eina_List *list;
 
     list = evas_object_smart_members_get(o);
-    EINA_LIST_FOREACH_SAFE(list, l, l_next, child) {
+    EINA_LIST_FREE(list, child) {
         void *mem;
 
         mem = evas_object_data_del(child, "m");
