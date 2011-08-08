@@ -89,7 +89,6 @@ eenvaders_ext_state_set(void *data, Evas_Object *obj,
                         const void *from_params,
                         const void *to_params, float pos)
 {
-    /* TODO */
 }
 
 static void
@@ -103,7 +102,6 @@ static Eina_Bool
 eenvaders_ext_param_set(void *data, Evas_Object *obj,
                         const Edje_External_Param *param)
 {
-    /* TODO */
     return EINA_TRUE;
 }
 
@@ -111,7 +109,6 @@ static Eina_Bool
 eenvaders_ext_param_get(void *data, const Evas_Object *obj,
                         Edje_External_Param *param)
 {
-    /* TODO */
     return EINA_TRUE;
 }
 
@@ -119,7 +116,6 @@ static Evas_Object *
 eenvaders_ext_content_get(void *data, const Evas_Object *obj,
                           const char *content)
 {
-    /* TODO */
     return NULL;
 }
 
@@ -127,41 +123,35 @@ static void*
 eenvaders_ext_params_parse(void *data, Evas_Object *obj,
                            const Eina_List *params)
 {
-    /* TODO */
     return NULL;
 }
 
 static void
 eenvaders_ext_params_free(void *params)
 {
-    /* TODO */
 }
 
 static const char*
 eenvaders_ext_label_get(void *data)
 {
-    /* TODO */
     return NULL;
 }
 
 static const char*
 eenvaders_ext_description_get(void *data)
 {
-    /* TODO */
     return NULL;
 }
 
 static Evas_Object *
 eenvaders_ext_icon_add(void *data, Evas *e)
 {
-    /* TODO */
     return NULL;
 }
 
 static Evas_Object *
 eenvaders_ext_preview_add(void *data, Evas *e)
 {
-    /* TODO */
     return NULL;
 }
 
